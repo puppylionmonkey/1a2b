@@ -1,6 +1,7 @@
 # 5位數
 # 0~9 任意組合 0123 ok 0011 no ok
 #
+import random
 import time
 
 from functions import create_all_comb, check_ab, choice_number, get_count_dict
@@ -13,15 +14,22 @@ guess_count = 0
 
 # while True:
 start_time = time.time()
-guess_time = 100  # len(all_comb_list1)
+guess_time = len(all_comb_list1)
 # for answer in ['1398']:
-for answer in all_comb_list1[:guess_time]:
+for answer in all_comb_list1:
+    # print('answer', answer)
     remain_comb_list2 = create_all_comb(digital)
+    self_guess_time = 0
     while True:
         # 選數字
+        # if self_guess_time < 10 // digital:
+        #     guess_number_str = '0123456789'[self_guess_time * digital:(self_guess_time + 1) * digital]
+        # else:
         max_count_ch_list = list(get_count_dict(remain_comb_list2).keys())[:digital]
         guess_number_str = choice_number(digital, max_count_ch_list, remain_comb_list2)
-        # guess_number_str = random.choice(remain_comb_list2) # 65078
+        # else:
+        #     guess_number_str = random.choice(remain_comb_list2)  # 65078
+        self_guess_time += 1
         # print(guess_number_str)
         guess_count += 1
 
@@ -36,11 +44,11 @@ for answer in all_comb_list1[:guess_time]:
             # print('win!')
             break
         else:
-            remain_comb_list2.remove(guess_number_str)
-            for remain_comb in remain_comb_list2:
-                ab = check_ab(guess_number_str, remain_comb)
+            for i in range(len(remain_comb_list2) - 1, -1, -1):
+                ab = check_ab(guess_number_str, remain_comb_list2[i])
+                # print(remain_comb_list2[i], guess_result[0], guess_result[1], ab[0], ab[1])
                 if guess_result[0] != ab[0] or guess_result[1] != ab[1]:
-                    remain_comb_list2.remove(remain_comb)
+                    del remain_comb_list2[i]
 
 end_time = time.time()
 print(guess_count)
