@@ -1,3 +1,4 @@
+import random
 from itertools import permutations
 
 
@@ -24,28 +25,33 @@ def check_ab(answer, number_str):
     return int(result / 10), result % 10
 
 
-def get_count_dict(remain_comb_list2):
+def get_each_number_total_count_dict(remain_comb_list2):
     test_str1 = ''
     for remain in remain_comb_list2:
         test_str1 += remain
     count_dict = dict()
     for i in range(10):
         count_dict[i] = test_str1.count(str(i))
-    return {k: v for k, v in sorted(count_dict.items(), key=lambda item: item[1], reverse=True)}
+    count_dict = {k: v for k, v in sorted(count_dict.items(), key=lambda item: item[1], reverse=True)}
+    return count_dict
 
 
-def choice_number(digital, max_count_ch_list, remain_comb_list2):
+def get_remain_number_score_dict(remain_comb_list2, each_number_total_count_dict):
     count_dict = dict()
     for remain_comb in remain_comb_list2:
         count = 0
         for ch in remain_comb:
-            if int(ch) in max_count_ch_list:
-                count += 1
+            count += each_number_total_count_dict[int(ch)]
         count_dict[remain_comb] = count
-        if count == digital:
-            return remain_comb
-    count_dict = {k: v for k, v in sorted(count_dict.items(), key=lambda item: item[1], reverse=True)}
-    return list(count_dict.keys())[0]
+    return {k: v for k, v in sorted(count_dict.items(), key=lambda item: item[1], reverse=True)}
+
+
+def choice_number(remain_comb_list2):
+    each_number_total_count_dict = get_each_number_total_count_dict(remain_comb_list2)
+    remain_number_score_dict = get_remain_number_score_dict(remain_comb_list2, each_number_total_count_dict)
+    first_guess_score = remain_number_score_dict[list(remain_number_score_dict.keys())[0]]
+    ok_guess_list = [guess_number for guess_number, score in remain_number_score_dict.items() if first_guess_score == score]
+    return random.choice(ok_guess_list)
 
 # digital = 4
 # print(check_ab('0134', '4567'))
